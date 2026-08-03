@@ -1,4 +1,4 @@
-# AetherNet — Community Emergency Response Platform
+# NearHelp — Community Emergency Response Platform
 <p align="center">
   <img width="250" src="https://drive.google.com/uc?id=1JGMC6qH5w2Hp6yAe0E41GWxj6QBVC8lu" alt="Centered Image" />
 </p>
