@@ -34,7 +34,8 @@ const SOS_TYPES = [
 ];
 
 export default function SOSButton() {
-    const { user } = useAuth();
+    const auth = useAuth();
+    const user = auth?.user ?? null;
     const [isOpen, setIsOpen] = useState(false);
     const [step, setStep] = useState<'initial' | 'details' | 'guidance'>('initial');
     const [selectedType, setSelectedType] = useState('');
