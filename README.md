@@ -36,11 +36,11 @@ A real-time, community-driven emergency coordination platform that connects peop
 
 ## Overview
 
-**AetherNet** is a full-stack emergency response ecosystem spanning web and mobile. A user in distress can raise an SOS in seconds — registered or completely anonymously — and the platform instantly notifies nearby community members who can physically respond. It works across a **Next.js web dashboard** and a **React Native Android app**, both connected to the same real-time backend.
+**NearHelp** is a full-stack emergency response ecosystem spanning web. A user in distress can raise an SOS in seconds — registered or completely anonymously — and the platform instantly notifies nearby community members who can physically respond. It works across a **Next.js web dashboard** and a **React Native Android app**, both connected to the same real-time backend.
 
-### What makes AetherNet different?
+### What makes NearHelp different?
 
-| Capability | AetherNet | Typical Emergency Apps |
+| Capability | NearHelp | Typical Emergency Apps |
 |---|---|---|
 | Anonymous SOS (no signup) | ✓ | ✗ |
 | AI first-response guidance | ✓ Gemini | ✗ |
@@ -199,7 +199,7 @@ Device A: Mesh starts → Bluetooth + WiFi Direct advertising
 
 ### [ONLINE] Online Mode Features (Internet Required)
 
-AetherNet's **Online Mode** provides a full-featured, server-backed emergency response platform with real-time coordination, AI assistance, and persistent data management.
+NearHelp's **Online Mode** provides a full-featured, server-backed emergency response platform with real-time coordination, AI assistance, and persistent data management.
 
 #### Real-time SOS Broadcasting
 - **5km Geographic Targeting**: Uses Haversine distance calculation to notify nearby community members
@@ -246,11 +246,6 @@ AetherNet's **Online Mode** provides a full-featured, server-backed emergency re
 - **Guardian Pathway**: Separate alert channel for assigned guardian contacts
 - **Mark-All-As-Read**: Batch notification management
 
----
-
-### [OFFLINE] Offline Mode Features (Zero Internet Required)
-
-AetherNet's **Offline Mode** transforms the mobile app into a **fully decentralized mesh network** using Bluetooth and WiFi Direct, enabling emergency response even when internet infrastructure is unavailable (natural disasters, remote areas, network outages).
 
 > **[KEY REQUIREMENT]**: While offline mode operates without internet, **maps must be downloaded beforehand while connected to WiFi**. The app auto-downloads tiles for your location when online, but you should verify maps are cached before traveling to areas with poor connectivity.
 
@@ -279,7 +274,6 @@ AetherNet's **Offline Mode** transforms the mobile app into a **fully decentrali
 > **[!] IMPORTANT**: Maps **must be downloaded while online** before offline mode can display them. The app auto-downloads tiles when connected to WiFi, but offline navigation will not work without pre-cached map data.
 
 - **OpenStreetMap Pre-Download**: Auto-downloads map tiles covering 50km radius (zoom 10-15) and 5km radius (zoom 16-17)
-- **WiFi-Only Download**: Preserves mobile data by downloading only on WiFi connections
 - **Base64 Tile Storage**: Stores tiles in AsyncStorage for instant retrieval
 - **Cache Validation**: Re-downloads if user moves >10km or cache is >30 days old
 - **Leaflet WebView Rendering**: Full-featured interactive maps with pinch-to-zoom, panning
@@ -312,7 +306,7 @@ AetherNet's **Offline Mode** transforms the mobile app into a **fully decentrali
 
 ### [HYBRID] Hybrid Mode Features
 
-AetherNet uniquely runs **both modes simultaneously** — the mesh network operates in the background even when the online WebView is displayed.
+NearHelp uniquely runs **both modes simultaneously** — the mesh network operates in the background even when the online WebView is displayed.
 
 #### Mode Switching Guide
 
@@ -346,7 +340,7 @@ Online Dashboard      📡 Satellite     → Switch to Offline Mesh
 #### Advanced Features
 
 #### Adaptive Tile Download
-- **Connection-Aware**: Only downloads maps on WiFi to preserve mobile data
+- **Connection-Aware**: Only downloads maps on WiFi
 - **Progress Indicator**: Shows download percentage and status
 - **Automatic Retry**: Re-attempts download if interrupted
 - **Cache Expiry**: 30-day validity ensures maps stay current
@@ -360,13 +354,6 @@ Online Dashboard      📡 Satellite     → Switch to Offline Mesh
 - **Context-Specific Forms**: Blood group auto-fill for Medical, car details for Car Problem, etc.
 - **False Alert Prevention**: Responders can flag fake SOS; 3+ flags = automatic suspension
 
-#### Cross-Platform Support
-- **React Native Android**: Native app sharing the same backend and socket infrastructure
-- **Shared Authentication**: One account works on both web dashboard and mobile app
-- **Push Notifications**: Responder alerts delivered natively on Android even when app is backgrounded
-- **One-Tap SOS**: Streamlined mobile UI for raising an SOS in seconds
-
----
 
 ## Tech Stack
 
@@ -399,22 +386,13 @@ Online Dashboard      📡 Satellite     → Switch to Offline Mesh
 | **cookie-parser** | 1.4.x | Cookie handling for refresh tokens |
 | **dotenv** | 17.x | Environment variable management |
 
-### Mobile — `AetherNetMobile/`
-| Technology | Version | Purpose |
-|---|---|---|
-| **React Native** | Latest LTS | Cross-platform native Android app |
-| **Leaflet (WebView)** | 1.9.4 | Offline maps rendering in WebView |
-| **Socket.IO Client** | 4.x | Shared real-time event layer with backend |
-| **React Navigation** | 6.x | In-app screen navigation |
-| **Google Nearby Connections** | Latest | Bluetooth + WiFi Direct mesh networking |
-| **AsyncStorage** | Latest | Local packet and tile storage |
 
 ---
 
 ## Project Structure
 
 ```
-Aether-Net/
+NearHelp/
 ├── backend/                    # Express.js API server
 │   ├── server.js               # Entry point, Socket.IO init
 │   ├── config/
@@ -432,7 +410,7 @@ Aether-Net/
 │   │   ├── sos.js              # /api/sos/* routes
 │   │   ├── auth.js             # /api/auth/* routes
 │   │   ├── users.js            # /api/users/* routes
-│   │   ├── admin.js            # /api/admin/* routes
+│   │   ├── admin.js           # /api/admin/* routes
 │   │   └── map.js              # /api/map/* routes
 │   ├── sockets/
 │   │   ├── index.js            # Socket.IO connection + JWT/anonymous auth
@@ -473,17 +451,9 @@ Aether-Net/
 │       ├── api.js              # Axios instance with interceptors + token storage
 │       └── socket.js           # Socket.IO singleton factory
 │
-└── AetherNetMobile/            # React Native Android application
-    ├── android/
-    │   └── app/src/main/
-    │       └── AndroidManifest.xml   
-    ├── src/
-    │   ├── screens/            # App screens (Home, SOS, Map, Chat, Profile)
-    │   ├── components/         # Shared React Native UI components
-    │   ├── navigation/         # React Navigation stack/tab config
-    │   ├── services/           # API + Socket.IO client wrappers
-    │   └── context/            # Auth context (shared logic with web)
-    └── package.json
+└── NS3 simulation/             # Network topology & protocol simulations
+    ├── scripts/                # Custom C++/Python ns-3 simulation models
+    └── docs/                   # Topology layout & execution logs
 ```
 
 ---
@@ -508,9 +478,6 @@ NEXT_PUBLIC_SOCKET_URL=http://localhost:5002
 GEMINI_API_KEY=your-google-gemini-api-key
 ```
 
-### Mobile (Android) — `AetherNetMobile/`
-
-The mobile app uses **Leaflet maps** rendered in a WebView for both online and offline modes. For offline operation, map tiles are pre-downloaded and served locally.
 
 ## Getting Started
 
@@ -560,24 +527,7 @@ The web dashboard runs on `http://localhost:3000`.
 
 ---
 
-### 3. Start the Mobile Application (Android)
 
-The mobile app uses Leaflet for mapping (no Google Maps API key needed).
-
-```bash
-cd AetherNetMobile
-npm install
-
-# Start the Metro bundler
-npx react-native start
-
-# In a new terminal, build and run on Android
-npx react-native run-android
-```
-
-> **Tip:** Make sure an Android emulator is running in Android Studio, or a physical Android device is connected with USB debugging enabled before running `run-android`.
-
----
 
 ## API Endpoints
 
