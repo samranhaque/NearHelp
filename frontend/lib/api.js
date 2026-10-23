@@ -43,7 +43,7 @@ api.interceptors.response.use(
             try {
                 // Attempt to refresh the token using the httpOnly cookie
                 const { data } = await axios.post(
-                    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api'}/auth/refresh`,
+                    '/api/auth/refresh',
                     {},
                     { withCredentials: true }
                 );

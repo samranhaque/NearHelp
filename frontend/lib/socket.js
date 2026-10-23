@@ -3,7 +3,10 @@ import { io } from 'socket.io-client';
 let socket = null;
 
 export const connectSocket = (token) => {
-    console.log('[Socket] 🔌 Attempting to connect with URL:', process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5002');
+    const socketUrl = process.env.NODE_ENV === 'development'
+        ? (process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000')
+        : window.location.origin;
+    console.log('[Socket] 🔌 Attempting to connect with URL:', socketUrl);
     
     if (socket) {
         // If already connected with SAME token, just return
@@ -16,7 +19,7 @@ export const connectSocket = (token) => {
         socket.disconnect();
     }
 
-    socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5002', {
+    socket = io(socketUrl, {
         autoConnect: false,
         auth: { token },
         transports: ['websocket'],

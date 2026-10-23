@@ -10,6 +10,10 @@ const nextConfig = {
     unoptimized: true,
   },
   async rewrites() {
+    // In Vercel Services, root-level routing sends /api and /socket.io
+    // directly to the backend service. Keep this proxy only for local dev.
+    if (process.env.VERCEL) return [];
+
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     // Remove trailing slash if present
     const cleanBackendUrl = backendUrl.replace(/\/$/, '');
