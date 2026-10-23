@@ -28,7 +28,7 @@ async function reverseGeocode(lat, lng) {
                 zoom: 18,
             },
             headers: {
-                'User-Agent': 'AetherNet-Emergency-App/1.0'
+                'User-Agent': 'AetherNet-Emergency-Website/1.0'
             },
             timeout: 5000
         });
