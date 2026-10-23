@@ -2,12 +2,12 @@
 <p align="center">
   <img width="250" src="https://drive.google.com/uc?id=1JGMC6qH5w2Hp6yAe0E41GWxj6QBVC8lu" alt="Centered Image" />
 </p>
-A real-time, community-driven emergency coordination platform that connects people in crisis with nearby helpers using AI guidance, live maps, and secure chat — available on Web and Android.
+A real-time, community-driven emergency response website that connects people in crisis with nearby helpers using AI guidance, live maps, and secure chat.
 
 <div align="center">
 
-![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20Android-0f172a?style=for-the-badge)
-![Stack](https://img.shields.io/badge/Stack-Next.js%20%7C%20Express%20%7C%20React%20Native-6366f1?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-Web-0f172a?style=for-the-badge)
+![Stack](https://img.shields.io/badge/Stack-Next.js%20%7C%20Express-6366f1?style=for-the-badge)
 ![AI](https://img.shields.io/badge/AI-Gemini%20%7C%20-10b981?style=for-the-badge)
 ![Realtime](https://img.shields.io/badge/Realtime-Socket.IO-f59e0b?style=for-the-badge)
 ![Database](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ecf8e?style=for-the-badge)
@@ -20,10 +20,6 @@ A real-time, community-driven emergency coordination platform that connects peop
 
 - [Overview](#overview)
 - [Features](#features)
-  - [Online Mode Features](#online-mode-features-internet-required)
-  - [Offline Mode Features](#offline-mode-features-zero-internet-required)
-  - [Hybrid Mode Features](#hybrid-mode-features)
-  - [Mode Switching Guide](#mode-switching-guide)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Environment Variables](#environment-variables)
@@ -36,27 +32,23 @@ A real-time, community-driven emergency coordination platform that connects peop
 
 ## Overview
 
-**NearHelp** is a full-stack emergency response ecosystem spanning web. A user in distress can raise an SOS in seconds — registered or completely anonymously — and the platform instantly notifies nearby community members who can physically respond. It works across a **Next.js web dashboard** and a **React Native Android app**, both connected to the same real-time backend.
+**NearHelp** is a web-based emergency response platform. A user in distress can raise an SOS in seconds — with an account or anonymously — and the website notifies nearby community members who can respond. The Next.js website connects to an Express backend for SOS coordination, live updates, and stored user data.
 
 ### What makes NearHelp different?
 
-| Capability | NearHelp | Typical Emergency Apps |
+| Capability | NearHelp | Typical Emergency Platforms |
 |---|---|---|
 | Anonymous SOS (no signup) | ✓ | ✗ |
 | AI first-response guidance | ✓ Gemini | ✗ |
 | Skill-based responder routing | ✓ | ✗ |
 | Live mutual GPS tracking | ✓ Seeker + Responder | ✗ |
 | Guardian pre-alerts | ✓ | ✗ |
-| Cross-platform (Web + Android) | ✓ | Rare |
 | False-alert abuse prevention | ✓ Auto-suspension | ✗ |
 | 24h post-crisis welfare check | ✓ | ✗ |
-| **Offline mesh networking** | ✓ P2P via Bluetooth/WiFi Direct | ✗ |
-| **Offline maps** | ✓ Pre-downloaded OSM tiles | ✗ |
-| **Zero-infrastructure operation** | ✓ Works without servers/internet | ✗ |
 
 ### Core Platform Flow
 
-#### [ONLINE] Online Mode Flow
+#### SOS Flow
 ```
 User in Crisis
     │
@@ -80,126 +72,11 @@ Raise SOS (typed + contextual details)
                   SOS Resolved → Rating → Welfare Check (24h)
 ```
 
-#### [OFFLINE] Offline Mode Flow (Mesh Network)
-```
-[Preparation Phase - While Online]
-    │
-    ▼
-App detects WiFi → Auto-downloads map tiles (50km + 5km radius)
-    │
-    └─→ Maps cached in AsyncStorage → [READY] Ready for offline use
-
-────────────────────────────────────────────────────────────────
-
-[Offline Operation - No Internet Required]
-    │
-    ▼
-Device A: Mesh starts → Bluetooth + WiFi Direct advertising
-    │
-    ├─→ Discovery: Finds Device B, C, D within ~100m range
-    │
-    └─→ Connection: Auto-connects using P2P_CLUSTER strategy
-              │
-              ▼
-         Mesh Network Formed
-         (A ←→ B ←→ C ←→ D)
-              │
-              ▼
-    User in Crisis (Device A)
-              │
-              ▼
-    Raise SOS Offline
-              │
-              ├─→ SOS Packet created with:
-              │     • Unique packetId
-              │     • GPS coordinates
-              │     • Emergency type
-              │     • Device UUID (origin)
-              │     • hopCount: 1
-              │
-              └─→ Saved to local AsyncStorage
-                        │
-                        ▼
-              Epidemic Routing Activated
-                        │
-              ┌─────────┴──────────┐
-              ▼                    ▼
-         Device B             Device C
-         receives packet      receives packet
-              │                    │
-              ├─→ Duplicate check (packetId)
-              ├─→ Save to local storage
-              ├─→ Display in SOS feed
-              └─→ Relay to connected peers
-                  (hopCount: 2)
-                        │
-                        ▼
-                   Device D, E, F...
-                   (up to 200 hops)
-                        │
-                        ▼
-         ┌──────────────┴───────────────┐
-         ▼                              ▼
-    Responder sees SOS           Another device relays
-    on offline map               to even more peers
-         │
-         ▼
-    Tap SOS → Opens Navigation
-         │
-         ├─→ Offline map displays route
-         ├─→ Compass arrow points to target
-         ├─→ Distance updates in real-time
-         └─→ Vibration alert at <50m
-                   │
-                   ▼
-         Responder arrives at location
-                   │
-                   ▼
-         [Physical Assistance Provided]
-                   │
-                   ▼
-    Seeker cancels SOS (Delete button)
-                   │
-                   ▼
-         Tombstone Packet Generated
-         { __delete__: true, packetId, hopCount: 1 }
-                   │
-                   ▼
-         Epidemic Delete Propagation
-                   │
-         ┌─────────┴──────────┐
-         ▼                    ▼
-    Device B             Device C
-    receives tombstone   receives tombstone
-         │                    │
-         ├─→ Add packetId to blocklist
-         ├─→ Delete from local storage
-         ├─→ Remove from SOS feed
-         └─→ Forward tombstone to peers
-             (prevents zombie packets)
-                   │
-                   ▼
-         All devices purge the SOS
-         within seconds via mesh
-```
-
-**Key Differences:**
-- ✗ No central server, no database, no authentication
-- ✓ 100% peer-to-peer using Bluetooth/WiFi Direct  
-- ✓ GPS works offline (satellites don't need internet)
-- ✓ Offline maps must be pre-downloaded on WiFi
-- ✓ Embedded AI protocols (no API calls)
-- ✓ Packets spread virally across mesh (epidemic routing)
-- ✓ Range: ~100m per hop, unlimited hops (max 200)
-- ✓ Works in disasters, remote areas, network blackouts
-
----
-
 ## Features
 
-### [ONLINE] Online Mode Features (Internet Required)
+### Emergency Response Features
 
-NearHelp's **Online Mode** provides a full-featured, server-backed emergency response platform with real-time coordination, AI assistance, and persistent data management.
+The website provides server-backed emergency coordination, AI assistance, and persistent data management.
 
 #### Real-time SOS Broadcasting
 - **5km Geographic Targeting**: Uses Haversine distance calculation to notify nearby community members
@@ -246,106 +123,6 @@ NearHelp's **Online Mode** provides a full-featured, server-backed emergency res
 - **Guardian Pathway**: Separate alert channel for assigned guardian contacts
 - **Mark-All-As-Read**: Batch notification management
 
-
-> **[KEY REQUIREMENT]**: While offline mode operates without internet, **maps must be downloaded beforehand while connected to WiFi**. The app auto-downloads tiles for your location when online, but you should verify maps are cached before traveling to areas with poor connectivity.
-
-#### Peer-to-Peer Mesh Networking (MANET)
-- **Google Nearby Connections API**: Uses Bluetooth + WiFi Direct for device discovery
-- **P2P_CLUSTER Strategy**: Multi-peer mesh formation for network resilience
-- **Automatic Peer Discovery**: Finds nearby devices within ~100m range automatically
-- **Bidirectional Communication**: Full-duplex data exchange between mesh nodes
-- **Connection Lifecycle Management**: Handles disconnections and reconnections gracefully
-- **Tie-Breaker Logic**: Prevents connection collisions when two devices discover each other simultaneously
-
-#### Epidemic Routing Protocol
-- **Hop-Count Based Relay**: Packets travel up to 200 hops across the mesh network
-- **Duplicate Detection**: Uses `packetId` to prevent packet loops and redundant processing
-- **Automatic Rebroadcast**: Each device forwards received packets to all connected peers
-- **Tombstone Propagation**: Distributed delete operations — when a user cancels an SOS, a "tombstone" message spreads across the mesh to remove it from all devices
-- **Persistent Blocklist**: Prevents deleted packets from being reinserted by late-joining peers
-
-#### Local Storage & Packet Management
-- **AsyncStorage Persistence**: All SOS packets stored locally on each device
-- **Device UUID Tracking**: Unique identifier for origin tracking without accounts
-- **Origin-Based Deletion**: Users can only delete their own SOS packets
-- **Deleted Packet Blocklist**: Maintains a blacklist of cancelled SOS IDs to reject zombie packets
-
-#### Offline Maps
-> **[!] IMPORTANT**: Maps **must be downloaded while online** before offline mode can display them. The app auto-downloads tiles when connected to WiFi, but offline navigation will not work without pre-cached map data.
-
-- **OpenStreetMap Pre-Download**: Auto-downloads map tiles covering 50km radius (zoom 10-15) and 5km radius (zoom 16-17)
-- **Base64 Tile Storage**: Stores tiles in AsyncStorage for instant retrieval
-- **Cache Validation**: Re-downloads if user moves >10km or cache is >30 days old
-- **Leaflet WebView Rendering**: Full-featured interactive maps with pinch-to-zoom, panning
-- **User Location Marker**: Shows current GPS position with heading indicator
-- **Download Progress Indicator**: Shows real-time download status (Downloading offline map... → Offline map ready)
-
-#### Offline Navigation
-> **[NOTE]**: Navigation requires pre-downloaded maps. Ensure maps are cached while online before entering offline mode.
-
-- **Haversine Distance Calculation**: Computes real-time distance to SOS without internet
-- **Cardinal Direction System**: N, NE, E, SE, S, SW, W, NW directional guidance
-- **Compass-Based Arrow Navigation**: On-screen arrow rotates based on device compass and target bearing
-- **Vibration Alerts**: Device vibrates when within 50m of destination
-- **GPS Tracking**: Native Geolocation API works offline (GPS satellites don't require internet)
-- **Real-Time Updates**: Distance and bearing update as user moves
-
-#### Offline AI Emergency Protocols
-- **50+ Embedded Protocols**: Pre-loaded emergency response instructions for cardiac arrest, choking, burns, fractures, drowning, allergic reactions, seizures, etc.
-- **Keyword-Based Triage**: Automatically detects life-threatening conditions from SOS descriptions
-- **Offline First-Aid Lookup**: Instant emergency guidance without internet
-- **No API Dependencies**: All AI logic runs locally on device
-
-#### Mesh Network Status Display
-- **Packet Counter**: Shows total SOS packets in local mesh network
-- **Peer Counter**: Displays number of directly connected devices
-- **Distance-Sorted Feed**: Lists all SOS alerts nearest-first based on GPS distance
-- **Device Name Display**: Shows unique device identifier for each mesh node
-
----
-
-### [HYBRID] Hybrid Mode Features
-
-NearHelp uniquely runs **both modes simultaneously** — the mesh network operates in the background even when the online WebView is displayed.
-
-#### Mode Switching Guide
-
-The app features a **floating toggle button** in the bottom-right corner that allows instant switching between Online and Offline modes:
-
-**Button States:**
-- **🌐 (Globe Icon)**: Shows when currently in **Offline Mode** → Tap to switch to **Online Mode**
-- **📡 (Satellite Icon)**: Shows when currently in **Online Mode** → Tap to switch to **Offline Mode**
-
-**How it Works:**
-```
-Current View          Button Shows     Tap Action
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Offline Mesh          🌐 Globe         → Switch to Online Dashboard
-Online Dashboard      📡 Satellite     → Switch to Offline Mesh
-```
-
-**Important Notes:**
-- The button indicates **where you'll go**, not where you are
-- When viewing the **online dashboard** (WebView), the button shows 📡 to indicate you can switch back to offline
-- When viewing the **offline mesh interface**, the button shows 🌐 to indicate you can switch to online
-- Both systems run simultaneously — the mesh network continues operating in the background even when viewing the online dashboard
-- No app restart required — switching is instant
-
-#### Automatic Mode Switching
-- **Network State Detection**: `NetInfo` monitors connection type (WiFi, cellular, none)
-- **WiFi-Triggered Map Download**: Auto-downloads offline maps when on WiFi with invalid cache
-- **User Toggle Button**: Floating button switches between Offline (mesh) and Online (WebView) interfaces
-- **Background Mesh Operation**: Mesh network continues discovering peers and relaying packets even when WebView is active
-
-#### Advanced Features
-
-#### Adaptive Tile Download
-- **Connection-Aware**: Only downloads maps on WiFi
-- **Progress Indicator**: Shows download percentage and status
-- **Automatic Retry**: Re-attempts download if interrupted
-- **Cache Expiry**: 30-day validity ensures maps stay current
-
----
 
 ### Additional Platform Features
 
@@ -425,35 +202,20 @@ NearHelp/
 │   └── jobs/
 │       └── welfareCheck.js     # Scheduled 24h post-crisis check job
 │
-├── frontend/                   # Next.js web dashboard
-│   ├── app/
-│   │   ├── dashboard/page.tsx  # Main dashboard + socket orchestration
-│   │   ├── anonymous/page.tsx  # Anonymous SOS page w/ full socket flow
-│   │   ├── auth/               # Login + signup pages
-│   │   └── api/gemini/         # Edge API route for Gemini AI
-│   ├── components/
-│   │   ├── dashboard/
-│   │   │   ├── sos-button.tsx              # Floating SOS trigger + modal flow
-│   │   │   ├── mutual-response-view.tsx    # Live map + chat for accepted SOS
-│   │   │   ├── responder-live-view.tsx     # Legacy seeker waiting view
-│   │   │   ├── mutual-map.tsx              # Leaflet map component
-│   │   │   ├── sos-feed-card.tsx           # Active SOS feed in dashboard
-│   │   │   ├── sos-stats-card.tsx          # Live "Today's Activity" stats
-│   │   │   ├── responder-history-card.tsx  # User's response log
-│   │   │   ├── settings-card.tsx           # Profile settings
-│   │   │   ├── live-map-card.tsx           # Full live map for dashboard
-│   │   │   ├── ai-assistant-card.tsx       # In-dashboard AI chat widget
-│   │   │   └── admin-dashboard.tsx         # Admin analytics + user management
-│   │   └── navbar.tsx                      # Navigation with Anonymous SOS link
-│   ├── context/
-│   │   └── AuthContext.tsx     # Auth state, login/logout, socket connect
-│   └── lib/
-│       ├── api.js              # Axios instance with interceptors + token storage
-│       └── socket.js           # Socket.IO singleton factory
-│
-└── NS3 simulation/             # Network topology & protocol simulations
-    ├── scripts/                # Custom C++/Python ns-3 simulation models
-    └── docs/                   # Topology layout & execution logs
+└── frontend/                   # Next.js web dashboard
+    ├── app/
+    │   ├── dashboard/page.tsx  # Main dashboard + socket orchestration
+    │   ├── anonymous/page.tsx  # Anonymous SOS page w/ full socket flow
+    │   ├── auth/               # Login + signup pages
+    │   └── api/gemini/         # Edge API route for Gemini AI
+    ├── components/
+    │   ├── dashboard/          # SOS, maps, chat, history, and admin views
+    │   └── navbar.tsx           # Navigation with Anonymous SOS link
+    ├── context/
+    │   └── AuthContext.tsx     # Auth state, login/logout, socket connect
+    └── lib/
+        ├── api.js              # Axios instance with interceptors + token storage
+        └── socket.js           # Socket.IO singleton factory
 ```
 
 ---
@@ -484,9 +246,7 @@ GEMINI_API_KEY=your-google-gemini-api-key
 ### Prerequisites
 
 - Node.js (LTS)
-- pnpm (frontend) or npm (backend and mobile)
-- **Java Development Kit (JDK) 17** — required for the Android mobile build
-- **Android Studio & Android SDK** — required for the mobile emulator or physical device build
+- pnpm (frontend) or npm (backend)
 - A Supabase project with the required tables
 
 ---

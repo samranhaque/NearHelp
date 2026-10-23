@@ -352,7 +352,7 @@ export default function SOSButton() {
         script += `My exact location is: ${locationInfo}. `;
         
         // Add community alert mention
-        script += `I have triggered a community alert through the NearHelp emergency app. `;
+        script += `I have triggered a community alert through the NearHelp website. `;
         
         // Add urgency for specific types
         if (['Fire', 'Gas Leak', 'Medical'].includes(type)) {
